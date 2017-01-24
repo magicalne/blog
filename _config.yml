@@ -71,4 +71,4 @@ deploy:
   type: git
   repo: git@github.com:magicalne/magicalne.github.io.git
   branch: master
-  message:
+  message: "Site updated: {{ now('YYYY-MM-DD HH:mm:ss')  }}"
