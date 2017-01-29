@@ -2,7 +2,8 @@
 layout: post
 title: 关于java中的assert
 date: 2016-11-04
-category: java assert
+categories:
+- java
 ---
 
 自从最近才发现，我一直在用错误的方式使用assert！这一切都源于自己的想当然没有去阅读[java doc](https://docs.oracle.com/javase/8/docs/technotes/guides/language/assert.html)！   

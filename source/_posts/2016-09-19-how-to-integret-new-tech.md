@@ -1,8 +1,9 @@
 ---
 layout: post
 title: 如何将新技术快速应用到现有系统中
-category: programming
-date: 2016--09-19
+date: 2016-09-19
+categories: 
+- programming
 ---
 
 最近对于编程的思考尤其多，是不是到了一个新level。。。可以打高级怪了:)   

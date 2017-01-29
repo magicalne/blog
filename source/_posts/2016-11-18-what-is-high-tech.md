@@ -2,7 +2,8 @@
 layout: post
 title: 到底什么是高科技?
 date: 2016-11-18
-category: thinking
+categories:
+- thinking
 ---
 
 现在是北京时间凌晨00:47，实在是睡不着，起来写点东西吧。    

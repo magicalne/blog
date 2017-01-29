@@ -2,7 +2,10 @@
 layout: post
 title: "cookie和csrf的故事"
 date: 2016-10-20
-category: spring security, csrf, cookie
+categories:
+- spring security
+- csrf
+- cookie
 ---
 
 cookie是一个很古老的东西，但是直到今天我才发现，我还是很不了解cookie啊。   

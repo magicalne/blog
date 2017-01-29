@@ -2,7 +2,10 @@
 title: GC是个什么鬼
 layout: post
 date: 2016-12-22
-category: java, JVM, GC
+categories:
+- java
+- JVM
+- GC
 ---
 
 今天看了一个[视频](https://www.youtube.com/watch?v=we_enrM7TSY)。挺有意思。标题是：Understanding Java Garbage Collection and what you can do about it。Speaker是Gil Tene，他是Azul的Vice President of Technology and CTO, Co-Founder。

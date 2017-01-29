@@ -1,8 +1,11 @@
 ---
 layout: post
 title: 在java应用中集成jython
-category: java, jython, jsr223
 date: 2017-01-01
+categories:
+- java
+- jython
+- jsr223
 ---
 
 今天是新年第一天，但是上周欠的帐还没还完。   

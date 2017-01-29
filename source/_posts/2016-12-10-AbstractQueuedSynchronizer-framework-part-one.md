@@ -2,7 +2,10 @@
 layout: post
 title: Paper -- "The java.util.concurrent Synchronizer Framework" Part One
 date: 2016-12-10
-category: java, concurrent, paper, AbstractQueuedSynchronizer
+categories:
+- java
+- concurrency
+- AbstractQueuedSynchronizer
 ---
 
 最近在看Doug Lea的那篇基于AQS实现的理论[论文](http://gee.cs.oswego.edu/dl/papers/aqs.pdf)。陆陆续续看了几遍。论文的问题就是作者会把一个或者一类具体问题进行抽象和总结，针对这个或这类问题进行研究，并试图站在一个更高的位置得出结论。这就导致，读这篇论文还是有点难的。主要的难点是细节理论的理解。毕竟这些论文看的少，很多上下文不是很懂，但是若是为了彻底理解这些，把引用的论文都看一遍，有点累。。。   

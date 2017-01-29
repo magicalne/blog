@@ -1,8 +1,10 @@
 ---
 layout: post
 title: 2016年终总结——What A Fucking Year...
-category: thinking
 date: 2017-01-24
+categories: 
+- thinking
+- year end summary
 ---
 
 马上就要过年了，回顾一下2016的成长。   

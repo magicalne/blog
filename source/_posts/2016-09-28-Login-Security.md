@@ -1,8 +1,11 @@
 ---
 layout: post
 title: Login Security
-category: login, security, spring security
 date: 2016-09-28
+categories: 
+- login
+- security
+- spring security
 ---
 最近有机会深入了解一下神秘的登录了：）之前开发的规则引擎ui需要权限验证功能了，我就不得不写了一套权限验证的东西，从前端到后端。其实公司里是有集成的统一登录项目，但是这个项目做的不好，没有考虑好前后端分离场景下的权限验证，导致我走了很多弯路。   
 

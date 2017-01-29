@@ -1,8 +1,13 @@
 ---
 layout: post
 title:  "Develop with reactjs -- part 0"
-categories: frontend react redux ace material-ui
 date: 2016-06-01
+categories:
+- frontend
+- react
+- redux
+- ace
+- material-ui
 ---
 ### 入坑
 组里躺着一个裸体的规则引擎，已经一年多了，木有UI，程序员用起来都费劲的那种...年前用nodejs写了一个CMD工具去CRUD规则，然并卵。一个多月前感觉已经有必要开发一套UI了，否则项目无法推动，新增修改规则全靠我人力搬运，实在手累，然后就有了这篇文章...

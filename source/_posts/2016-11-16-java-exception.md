@@ -2,7 +2,9 @@
 title: 关于java异常
 layout: post
 date: 2016-11-16
-category: java, exception
+categories:
+- java
+- exception
 ---
 
 写代码的时候一直使用checkstyle和findbug，checkstyle和findbug可以帮助你写出标准规范的代码。特别是跟intellij插件结合之后，你的缩进、格式、甚至是异常控制都会被规范化。比如之前的项目中，对于异常的管理很不严格，大家都是所以的throw Exception和catch Exception。所以有一天我就抽时间将这些Exception都改成了具体的某个异常。   

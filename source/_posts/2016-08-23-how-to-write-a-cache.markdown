@@ -2,7 +2,8 @@
 layout: post
 title: "How to write a Java cache"
 date: 2016-08-23
-category: java cache
+categories: 
+- cache
 ---
 
 最近在看**Java concurrency in practice**   

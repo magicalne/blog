@@ -2,7 +2,9 @@
 layout: post,
 title: Memory model
 date: 2016-11-17
-category: java, memory model
+categories:
+- java
+- memory model
 ---
 
 [memory model](https://www.cs.umd.edu/~pugh/java/memoryModel/jsr-133-faq.html)

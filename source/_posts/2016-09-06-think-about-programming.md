@@ -1,7 +1,9 @@
 ---
 layout: post
 title: 编程思考
-category: programming
+categories: 
+- programming
+- thinking
 date: 2016-09-06
 ---
 想写这篇文章好多天了，一直没得空，今天趁机补上。   

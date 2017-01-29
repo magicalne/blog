@@ -1,7 +1,9 @@
 ---
 layout: post
-title: Summary of 2015
+title: 年终总结-2015
 date: 2016-01-10
+categories:
+- year end summary
 ---
 
 好久没有更新了，这个年终总结更是拖了好久。接下来就总结一下2015年的技术成长吧。

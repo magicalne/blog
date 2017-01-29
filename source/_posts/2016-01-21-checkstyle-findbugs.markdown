@@ -2,6 +2,8 @@
 layout: post
 title: Checkstyle and findbugs
 date: 2016-01-21
+categories:
+- code quality
 ---
 
 Developers try to write code as good as possible. But we need some tools to validate. Checkstyle and findbugs are two great tools to check our code.

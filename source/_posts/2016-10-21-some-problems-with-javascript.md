@@ -2,7 +2,9 @@
 layout: post
 title: "javascript的一些问题"
 date: 2016-10-21
-category: javascript, frontend
+categories:
+- javascript
+- frontend
 ---
 
 ### 版本问题   

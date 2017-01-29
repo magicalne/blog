@@ -1,8 +1,10 @@
 ---
 layout: post
 title: "Some dark side in Java -- Synchronize on Boolean"
-category: java concurrent
 date: 2016-07-30
+categories: 
+- concurrency
+- synchronization
 ---
 我们知道，java中的同步关键字是**synchronized**。它有两种用法：   
 
@@ -14,12 +16,12 @@ date: 2016-07-30
 synchronized(this) {...}
 ```
 但往往我们并不是想要直接的给当前对象加锁，而是创造一个单一的、跟对象无关的临界区。
-然后有一个同事就写出了这样的代码：   
+然后就有了这样的代码：   
 ```java
 private Boolean aBoolean = ...
 synchronized(aboolean) {...}
 ```
-这个问题其实很明显,明显到大多数人可能会直接忽略掉。原因是自动装箱导致在一个jvm下，同时有且仅有两个Boolean实例：true/false   
+这个问题其实不是很明显, 原因是自动装箱和JVM对于常量的管理导致在一个jvm下，同时有且仅有两个Boolean实例：true/false   
 尽管我可以
 ```java
 new Boolean(true)
@@ -55,4 +57,4 @@ public void doSomeStuffAndToggleTheThing(){
 
 简单说就是，两个线程同时访问这段代码，会因为同步对象改变而发生状态不一致的现象。   
 
-另外一个问题类似的问题是，若又两段代码都对Boolean对象做同步，当多线程访问这两段代码时...   
+另外一个类似的问题是，若有两段代码都对Boolean对象做同步，当多线程访问这两段代码时...   
