@@ -18,4 +18,58 @@ tag:
 
 为什么说SoftReference适合做cache？因为当你为一个普通对象创建一个SoftReverence，即使当这个对象不再拥有任何其他对象的强连接，垃圾收集器也可能不会立即将SoftReference回收，而是等到剩余内存达到阀值了，不得不进行垃圾回收的时候才将SoftReference引用的对象回收。因此，在构建cache程序时，这里就可以使用SoftReference构成多级cache架构。第一层是你的cache数据结构，可能是一个自己实现的Map，第二层是SoftReference。
 
+### 对比SoftReference、WeakReference和PhantomReference   
+
+```java
+ReferenceQueue<Foo> fooQueue = new ReferenceQueue<>();
+Foo foo = new Foo();
+Reference<Foo> reference = new WeakReference<>(foo, fooQueue);
+foo = null;
+System.gc();
+System.out.println(reference.get() == null); //true
+```
+
+在JVM开始gc的时候，由于foo没有任何连接对象，WeakRefeence会直接被GC回收。   
+
+```java
+ReferenceQueue<Foo> fooQueue = new ReferenceQueue<>();
+Foo foo = new Foo();
+Reference<Foo> reference = new SoftReference<>(foo, fooQueue);
+foo = null;
+System.gc();
+System.out.println(reference.get() == null); //false
+```
+
+而当使用SoftReference时，即使foo没有任何强连接，在发生GC的时候，由于内存尚且充足，SoftReference不会被立即回收，而是在将来内存不够用的时候再回收。   
+
+```java
+ReferenceQueue<Foo> fooQueue = new ReferenceQueue<>();
+Foo foo = new Foo();
+Reference<Foo> reference = new PhantomReference<>(foo, fooQueue);
+foo = null;
+System.out.println(reference.get() == null); //true
+```
+
+PhantomReference作为最弱的引用对象，当一个对象只被一个PhantomReference引用时，不管是否发生GC，这个对象都会被回收。   
+
+有趣的是，以上对于PhantomReference的解释是一个错觉。因为PhantomReference.get()永远返回**null**。   
+
+```java
+/**
+ * Returns this reference object's referent.  Because the referent of a
+ * phantom reference is always inaccessible, this method always returns
+ * <code>null</code>.
+ *
+ * @return  <code>null</code>
+ */
+public T get() {
+    return null;
+}
+```
+
+### ReferenceQueue是个什么鬼？
 TODO
+
+# Reference
+1. [Difference between WeakReference vs SoftReference vs PhantomReference vs Strong reference in Java](https://www.javacodegeeks.com/2014/03/difference-between-weakreference-vs-softreference-vs-phantomreference-vs-strong-reference-in-java.html)
+2. [What is a Soft Reference Cache Anyway?](https://www.ortussolutions.com/blog/tip-of-the-week-what-is-a-soft-reference-cache-anyway)
