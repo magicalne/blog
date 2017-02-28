@@ -1,7 +1,7 @@
 magicalne
 ==============
 
-cellphone MTg2MjQyNjM1MTg=
+cellphone 186😳2426😳3518
 gmail <magicalne@gmail.com>
 blog [magicalne.github.io](http://magicalne.github.io/)
 github [@magicalne](https://github.com/magicalne/)

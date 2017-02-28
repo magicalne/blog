@@ -93,7 +93,20 @@ while (true) {
 
 如果单从文档看，我完全没有看出ReferenceQueue是干什么用的。。。可能是因为这个类的调用者不仅仅包含编写代码的程序员，还包括JVM。可以理解为将已经被GC回收的对象加到queue中。我们可以自己控制，也可以由JVM调用完成，具体情况就要看如何实现了。
 
+### FinalReference
+
+这个应该是最抽象的一类reference，@你假笨同学给出了更加详尽的解释，在这里通俗的说明一下。
+
+什么样的对象会成为FinalReference呢？一个重写了Object下的finalize()且finalize()方法体不为空的对象！
+
+我们知道finalize()类似于析构函数，但是java中有垃圾回收，我们不应该手动触发finalize()，所以这个方法的调用也确实是被JVM调用的。看源码会发现，FinalRefernce是包级私有的，同包下有一个声明为final的子类：Finalizer。
+
+当一个实现了finalize方法的对象通过调用构造方法初始化时，JVM就会通过调用Finalizer类中的register方法来注册。Finalizier中还会初始化一个FinalizerThread，用于通过调用runFinalizer()执行销毁操作。
+
+什么情况下我们需要重写finalize方法呢？可能我们永远不需要。。。可以参考FileInputStream的实现。finalize可以用于执行close操作，但是由于执行销毁的线程FinalizerThread优先级比较低，所以不能保证会及时销毁，看起来还是很鸡肋的。。。
+
 # Reference
 1. [Difference between WeakReference vs SoftReference vs PhantomReference vs Strong reference in Java](https://www.javacodegeeks.com/2014/03/difference-between-weakreference-vs-softreference-vs-phantomreference-vs-strong-reference-in-java.html)
 2. [What is a Soft Reference Cache Anyway?](https://www.ortussolutions.com/blog/tip-of-the-week-what-is-a-soft-reference-cache-anyway)
 3. [Finalization and Phantom References](https://dzone.com/articles/finalization-and-phantom)
+4. [JVM源码分析之FinalReference完全解读](http://lovestblog.cn/blog/2015/07/09/final-reference/)
