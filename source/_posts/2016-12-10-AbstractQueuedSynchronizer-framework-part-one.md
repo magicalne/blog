@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Paper -- "The java.util.concurrent Synchronizer Framework" Part One
+title: Paper -- "The java.util.concurrent Synchronizer Framework"
 date: 2016-12-10
 categories:
 - java
@@ -105,9 +105,13 @@ while (pred.status != RELEASED); //spin
 ```
 
 出队操作很简单，只要把**node**指向头就好了。这样**node**就会获取锁
-···java
+```java
 head = node;
 
 ```
 
 CLH lock的优点包括：进队出队快、lock-free、obstruction free（尽管有竞争，但是总会有一个线程在竞争中胜出。）通过观察head和tail是否相同就知道是否有线程在等待。
+
+AQS在实现中用尽了原子操作，代码很难看懂。思路就是，如果有多个请求，并发的执行一段代码，原子操作要求只有符合目标预期的一个请求会真正执行原子操作，否则应该重新进入spin中。所以，编写原子操作的代码不能简单的考虑当前的可能性，应该把所有的可能性都考虑进去。
+
+需要注意的是，一个节点的状态信息（status），其实是保存在它的前驱中的！获取锁和释放锁对应的就是进队和出队。需要注意的是，默认AQS是不公平的。这意味着，并不是head会第一个出队。这是出于效率的考虑。试想，一开始没有资源，但是当一个线程在acquire的时候，突然有资源被释放出来，而这个线程尚未进队列。这时候，这个线程会跳过进队操作，直接acquire。这样比进队列仔出队列效率要高。同样道理，对应notifyAll也是同样道理，不公平的效率更高。
