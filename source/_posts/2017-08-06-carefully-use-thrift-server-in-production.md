@@ -1,7 +1,7 @@
 layout: post
 title: 谨慎在生产环境使用thrift server
 date: 2017-08-06
-categories:
+tags:
 - java
 - thrift
 ---
