@@ -2,8 +2,8 @@
 layout: post
 title: JDBC， field binding， 驼峰 VS 下划线
 tag:
--- jdbc
--- phoenix
+- jdbc
+- phoenix
 ---
 
 项目引入phoenix之后，也一并引入了很多问题，那天估计脑子真的热了，居然花时间做了这样的一个功能；（
