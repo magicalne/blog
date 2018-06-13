@@ -42,7 +42,7 @@ tag:
 
 ### 结论
 
-到这里，原因都清楚了。规则引擎使用Java 8，Java 8默认GC算法使用CMS。CMS的minor GC最大的问题就是不能处理framentation，因为CMS没有compact的操作。在高并发的执行规则的时候，会创建很多小对象，minor GC过后会回收这部分对象，但是由于没有compact，heap上有很多碎片。导致CMS必须依赖full GC来触发compact操作。然而full GC的停顿时间长，导致系统响应性降低，当有后续请求进来时，系统会越来越慢，进而发生雪崩现象。
+到这里，原因都清楚了。规则引擎使用Java 8，我们默认GC算法使用CMS。CMS的minor GC最大的问题就是不能处理framentation，因为CMS没有compact的操作。在高并发的执行规则的时候，会创建很多小对象，minor GC过后会回收这部分对象，但是由于没有compact，heap上有很多碎片。导致CMS必须依赖full GC来触发compact操作。然而full GC的停顿时间长，导致系统响应性降低，当有后续请求进来时，系统会越来越慢，进而发生雪崩现象。
 
 G1确实是这个场景下最合适的垃圾回收策略。G1可以更好的利用大内存，并有效降低停顿时间。而且在进行minor GC的时候就会触发compact操作，解决了碎片化的问题。从而保证了系统响应性，提高了吞吐量。
 
