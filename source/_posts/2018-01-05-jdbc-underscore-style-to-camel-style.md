@@ -1,6 +1,7 @@
 ---
 layout: post
 title: JDBC， field binding， 驼峰 VS 下划线
+date: 2018-01-05
 tag:
 - jdbc
 - phoenix
