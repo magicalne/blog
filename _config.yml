@@ -69,6 +69,8 @@ theme: noise
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
+  name: magicalne
+  email: magicalne@gmail.com
   repo: git@github.com:magicalne/magicalne.github.io.git
   branch: master
   message: "Site updated: {{ now('YYYY-MM-DD HH:mm:ss')  }}"
