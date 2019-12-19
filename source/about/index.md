@@ -10,9 +10,10 @@ Skill
 ---
 
 * 夯实的计算机科学基础，包括操作系统、网络、数据结构、算法。
-* Java核心，包括范型、集合、多线程、JMM、GC、JVM。
+* JMM、GC、JVM。
+* AWS
 * Vim and Emacs😎
 
 Focusing on
 ---
-Java、JVM底层，关注Java社区最新进展；P2P风控系统的开发。
+Java、JVM底层，关注Java社区最新进展；风控系统的开发。
