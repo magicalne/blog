@@ -1,4 +1,4 @@
-title: rust反序列化提升性能1
+title: rust反序列化提升性能
 layout: post
 date: 2020-04-27
 tag:
@@ -47,7 +47,7 @@ pub trait DeserializeSeed<'de>: Sized {
 
 Nom parser的返回签名很简单: **IResult<Input, Output, Error>**
 
-parser执行成功，会返回<剩余input， 生成的输出>；如果失败，则会返回<生于input，Error>。典型的rust返回范式。而parser的输入永远只有一个，默认的实现支持&[u8]和&str。文档说也可以支持自定义的input。
+parser执行成功，会返回<剩余input， 生成的输出>；如果失败，则会返回<生于input，Error>。典型的rust返回范式。而parser的输入永远只有一个，默认的实现支持&[u8]和&str。文档说也可以支持自定义的input。如果编写的parse方法需要传入其他参数，可以通过call!这个macro，实现原理就是currying，最多支持6层。
 
 对于parser过程中需要识别的部分，则需要通过组合的方式把子parser合并起来。这也就是combinator的思想。各个combinator会byte by byte的消化input。
 
@@ -74,33 +74,75 @@ Found 3 outliers among 100 measurements (3.00%)
   1 (1.00%) high severe
 ```
 
-尴尬，没有想象中的好。还停留在微妙级别。
+尴尬，虽然是nom更快一点，但是没有想象中的好。还停留在微妙级别。
 
-再对比一下，用nom作者实现的json parser呢？
+## 继续优化
 
-## serde_json vs nom vs nom json
+nom本身的优化已经很极致了，[这里](https://www.youtube.com/watch?v=7VNsmlCAmHU)是nom作者做的一次分享。采用了多种优化方式，最终将http parser的性能从500MB/S提升到2GB/s。
+
+后来我重写了parser，然后参考httparser的优化方式。httparser有多处空间换时间的操作，简单有效。
+
+下面是我匹配字段的方法：
+
+```rust
+macro_rules! byte_map {
+    ($($flag:expr,)*) => ([
+        $($flag != 0,)*
+    ])
+}
+
+static TOKEN_MAP: [bool; 256] = byte_map![
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+];
+
+#[inline]
+fn is_token(b: u8) -> bool {
+    TOKEN_MAP[b as usize]
+}
+
+#[inline]
+fn content(i: &[u8]) -> IResult<&[u8], &[u8]> {
+    take_while(move |c| {
+        is_token(c)
+    })(i)
+}
+```
+
+benchmark提升显著，两个json的速度都上来了：
 
 ```
-Deserialize OrderBookL2/serde_json                                                                             
-                        time:   [10.984 us 11.030 us 11.088 us]
-                        change: [-10.400% -8.1551% -6.0993%] (p = 0.00 < 0.05)
-                        Performance has improved.
-Found 11 outliers among 100 measurements (11.00%)
-  5 (5.00%) high mild
-  6 (6.00%) high severe
-Deserialize OrderBookL2/nom_my_parser                                                                             
-                        time:   [7.2884 us 7.3109 us 7.3376 us]
-Found 15 outliers among 100 measurements (15.00%)
-  5 (5.00%) high mild
-  10 (10.00%) high severe
-Deserialize OrderBookL2/nom_json                                                                            
-                        time:   [439.24 ns 439.45 ns 439.66 ns]
-Found 10 outliers among 100 measurements (10.00%)
-  6 (6.00%) low mild
-  3 (3.00%) high mild
+Deserialize/nom_my_parser_order_book                                                                             
+                        time:   [6.8123 us 6.8257 us 6.8408 us]
+                        change: [-1.2373% -0.7937% -0.3625%] (p = 0.00 < 0.05)
+                        Change within noise threshold.
+Found 3 outliers among 100 measurements (3.00%)
+  1 (1.00%) low mild
+  1 (1.00%) high mild
   1 (1.00%) high severe
+Deserialize/nom_my_parser_trade                                                                             
+                        time:   [4.6656 us 4.6828 us 4.7036 us]
+                        change: [-0.4447% +0.0002% +0.4730%] (p = 1.00 > 0.05)
+                        No change in performance detected.
+Found 8 outliers among 100 measurements (8.00%)
+  4 (4.00%) high mild
+  4 (4.00%) high severe
 ```
 
-这真的很尴尬了，使用vec+map实现的nom_json居然比我自己实现的快这么多，已经到ns级别了。
+在这个版本中，byte array转具体类型（比如转u64）是用的lexical_core::parse，这里还有优化空间吗？
 
-确实nom本身的优化已经很极致了，[这里](https://www.youtube.com/watch?v=7VNsmlCAmHU)是nom作者做的一次分享。采用了多种优化方式，最终将http parser的性能从500MB/S提升到2GB/s。
+自己分别实现了to_u64、to_i32和to_f32。确实小有提升，其中to_f32的提升最明显。还尝试了古法优化unrolling，但是没有明显提升。
