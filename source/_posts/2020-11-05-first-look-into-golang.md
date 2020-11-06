@@ -11,11 +11,20 @@ go作为一门现代语言，没有历史包袱，语法简单。就是由于起
 
 没有exception，error只不过是一个value而已。没有采纳try-catch，而是简单的使用多返回值的形式，强制调用者对error进行处理。这里rust跟go很像，也是没有exception。但是rust吸收了更多函数式编成语言特性，使用Result对返回值进行包装，而不是作为多返回值的形式。
 
-go有指针的概念，而且真的是指针，但是没有c各种神奇的功能。因为go设计为pass by value，每次向一个方法里传递变量都是一份copy。那怎么在这个方法里修改这个参数变量的内容呢？答案就是传一个指针进去。尽管这个指针也是一份copy，但是指向的内容确是真实存在的。这里就很不java了，java通过封装可见性(private/protected/public/final)来防止用户修改某个object。
+go有指针的概念，而且真的是指针，但是没有c各种神奇的功能。因为go设计为pass by value，每次向一个方法里传递变量都是一份copy。那怎么在这个方法里修改这个参数变量的内容呢？答案就是传一个指针进去。尽管这个指针也是一份copy，但是指向的内容确是真实存在的。这里就很不java了，java通过封装可见性(private/protected/public/final)来防止/允许用户修改某个object。
 
 没有class？用method！这里rust也跟go很像。除了普通的func，还可以为struct实现自己的func，也就是method。加上指针的存在，就可以区分“只读”method和“读写”method。
 
-[Go Proverbs](https://www.youtube.com/watch?v=PAAkCSZUG1c)
+比较简陋的interface？[Go Proverbs](https://www.youtube.com/watch?v=PAAkCSZUG1c)这个视频很有意思，其中聊到了java中的抽象。演讲者说到，interface应该声明尽量少的方法，否则，方法越多，抽象越少！不能同意更多。java里有太多为了抽象而抽象的地方，不仅要背诵API还要背interface。说到这里，特别想统计一下，java8前后的sdk，包括spring发布的版本中，interface里的方法数量。在引入lambda之后，interface里的方法数量肯定是越来越少的，关键是那些非lambda的interface，java自己是否有在反思。rust trait和go interface很像，但是go缺少了范型，还是差点了。
+
+go的入门生态不错，内容都集中在一起了，入门和深入的材料离的也很近。不像java，像老古董似的都藏起来的...
 [A tour of Go](https://tour.golang.org/)
 [faq](https://golang.org/doc/faq)
-[Go memory model](https://golang.org/ref/mem)
+[Effective go](https://golang.org/doc/effective_go.html)
+
+[Go memory model](https://golang.org/ref/mem)和[Java memory model](https://docs.oracle.com/javase/specs/jls/se8/html/jls-17.html#jls-17.4)光从篇幅上就能看出，go更简单，事实也确实如此。毕竟go没那么多关键词。也就没有所谓的java volatile带来的可见行，构造方法里声明private final初始化防止reorder等等。
+
+语言审美上说，go有很多“聪明”的设计，这反倒是我不喜欢的。。。
+我还是更喜欢rust的，更美！但是对比这两个年轻语言，真的是有大量的相似之处阿。不知道以后会不会出现go+rust的搭配，就像python+c++。两个年轻
+
+好了，学了1天，会了～～开写
