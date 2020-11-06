@@ -10,7 +10,7 @@ tag:
 
 虽然docker一直有用，但是cgroup、namespace只停留在字面上见过的级别。最近上手rust，想用rust写一个oci的实现，发现rust下有一些cgroup的crate。进而发现cgroup v2已经release有一段时间了，crun、runc等等都已经支持上了。但是rust中没有cgroup v2对应的实现。所以，写一个？
 
-看了下(文档)[https://man7.org/linux/man-pages/man7/cgroups.7.html]，v1和v2的差距还是很大的。网上介绍版本差异的文章很多了，intel的这个(pdf)[https://events.static.linuxfound.org/sites/events/files/slides/cgroup_and_namespaces.pdf]介绍的足够了。
+看了下[文档](https://man7.org/linux/man-pages/man7/cgroups.7.html)，v1和v2的差距还是很大的。网上介绍版本差异的文章很多了，intel的这个[pdf](https://events.static.linuxfound.org/sites/events/files/slides/cgroup_and_namespaces.pdf)介绍的足够了。
 
 我的Fedora32已经默认支持上了cgroup v2，所以我按照文档说明用rust写了写测试代码。从最简单的创建一个cgroup开始。我是按照文档中操作fs的方式实现的：
 
@@ -73,7 +73,7 @@ $ systemctl daemon-reload
 
 # nsdelegate
 
-cgroup v2有一个mount option： nsdelegate。(参见文档)[https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html#delegation]。
+cgroup v2有一个mount option： nsdelegate。[参见文档](https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html#delegation)。
 
 >### Model of Delegation
 A cgroup can be delegated in two ways. First, to a less privileged user by granting write access of the directory and its “cgroup.procs”, “cgroup.threads” and “cgroup.subtree_control” files to the user. Second, if the “nsdelegate” mount option is set, automatically to a cgroup namespace on namespace creation.
@@ -135,10 +135,11 @@ Delegate=pids memory
 TasksMax=infinity
 TimeoutStopSec=120s
 KeyringMode=inherit
+```
 
 user@.service是为所有的user-uid创建的，所以必须要用sudo reload。
 
-但是有没有办法为user-1000设置delegation呢？这样就不用root了。我在本地没试出来，但是看到(github)[https://github.com/containers/podman/issues/1429#issuecomment-419913822]有一段摘自cgroup v2 mail list的一段话，貌似是可能的：
+但是有没有办法为user-1000设置delegation呢？这样就不用root了。我在本地没试出来，但是看到[github](https://github.com/containers/podman/issues/1429#issuecomment-419913822)有一段摘自cgroup v2 mail list的一段话，貌似是可能的：
 
 > Or in other words: if you are looking for a way to get your own
 per-user delegated cgroup subtree, simply ask systemd for it by
@@ -147,5 +148,5 @@ a scope unit to be registered, also with Delegate=yes set. Nothing
 else is supported.
 
 
-Anyway，文档里面好多陈述有矛盾，有可能是文档比较落后吧。
+Anyway，文档里面好多陈述有矛盾，有可能是文档比较落后吧。有待研究。
 
