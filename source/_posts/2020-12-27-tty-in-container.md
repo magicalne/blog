@@ -31,7 +31,10 @@ bin  dev  etc  home  notify  proc  root  sys  tmp  usr  var
 
 devpts历史众多，这里记录了我关注的部分。
 
-在比较new的早期，devpts在linux下是一个单例，如果需要创建一个`新的`terminal，可以通过创建一个pts来实现，而devpts这个设备仍然是独一份。但是时间来到2008年左右，由于linux加入了container的概念，事情就很不一样了。如果devpts还是单例，那么会有安全问题：container1创建了一个pts1，container2可以通过devpts`看到`pts1。为了解决这个问题，devpts增加了`newinstance`这个参数，至此，container中的devpts才是单例。为了可以向后兼容（这个兼容我没看出有啥用），还需要```sh mount -o bind /dev/pts/ptmx /dev/ptmx ```
+在比较new的早期，devpts在linux下是一个单例，如果需要创建一个`新的`terminal，可以通过创建一个pts来实现，而devpts这个设备仍然是独一份。但是时间来到2008年左右，由于linux加入了container的概念，事情就很不一样了。如果devpts还是单例，那么会有安全问题：container1创建了一个pts1，container2可以通过devpts`看到`pts1。为了解决这个问题，devpts增加了`newinstance`这个参数，至此，container中的devpts才是单例。为了可以向后兼容（这个兼容我没看出有啥用），还需要:
+```sh
+ mount -o bind /dev/pts/ptmx /dev/ptmx
+ ```
 
 [patch详见这里](https://lwn.net/Articles/689539/)。
 
@@ -52,8 +55,6 @@ devpts历史众多，这里记录了我关注的部分。
    When all devpts mounts are multi-instance, /dev/ptmx can permanently be
    a symlink to pts/ptmx and the bind mount can be ignored.
 
-# ptmx、pts
-
 ptmx、pts是成对出现的 - [pseudoterminal master and slave](https://linux.die.net/man/4/ptmx)。
 
-这里面就有很多东西了。历史成分很多，
+TODO
