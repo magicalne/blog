@@ -55,6 +55,43 @@ devpts历史众多，这里记录了我关注的部分。
    When all devpts mounts are multi-instance, /dev/ptmx can permanently be
    a symlink to pts/ptmx and the bind mount can be ignored.
 
-ptmx、pts是成对出现的 - [pseudoterminal master and slave](https://linux.die.net/man/4/ptmx)。
+从这里也就能够解释为什么会分别存在/dev/ptmx和/dev/pts/ptmx。在container中，需要通过上述方式为container创建一个新的ptmx。ptmx、pts是成对出现的 - [pseudoterminal master and slave](https://linux.die.net/man/4/ptmx)。
 
-TODO
+## 为container设置terminal
+
+在初始化namespaces、unshare之后，在fock的子进程中首先需要执行[setsid](https://man7.org/linux/man-pages/man2/setsid.2.html)。这一步是为了确保子进程是`the leader of the new session`，否则在后面执行ioct的时候，会出现eperm。
+
+接下来是按照config.json为container初始化fs、mount ptmx、按照[oci linux的标准](https://github.com/opencontainers/runtime-spec/blob/master/runtime-linux.md)，还需要为container进程映射stdio。然后就可以设置terminal了。rust实现：
+
+```rust
+fn setup_terminal() -> Result<RawFd> {
+    let master: RawFd = open(
+        Path::new("/dev/ptmx"),
+        OFlag::O_RDWR | OFlag::O_NOCTTY | OFlag::O_CLOEXEC,
+        Mode::empty(),
+    )
+    .expect("open");
+    let slave_name = ptsname_r(master).expect("Failed to create pty slave");
+    dbg!(&slave_name);
+    grantpt(master).expect("cannot grant");
+    unlockpt(master).expect("Failed to unlock");
+    let slave_fd: RawFd = open(Path::new(&slave_name), OFlag::O_RDWR, Mode::empty())
+        .expect("Failed to open slave fd");
+    let console = Path::new("/dev/console");
+    if !console.exists() {
+        File::create(console).expect("cannot create console");
+    }
+    mount::<_, _, str, Path>(
+        Some(Path::new(&slave_name)),
+        console,
+        Some("bind"),
+        MsFlags::MS_BIND,
+        None,
+    )?;
+    dup3(slave_fd, 0, OFlag::O_RDONLY).expect("Failed to set stdin");
+    dup3(slave_fd, 1, OFlag::O_RDONLY).expect("Failed to set stdout");
+    dup3(slave_fd, 2, OFlag::O_RDONLY).expect("Failed to set stderr");
+    ioctl(0)?; //libc::ioctl(fd, TIOCSCTTY, 0);
+    Ok(master)
+}
+```
