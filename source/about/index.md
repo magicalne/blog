@@ -14,6 +14,4 @@ Skill
 * AWS
 * Vim and Emacs😎
 
-Focusing on
----
-Java、JVM底层，关注Java社区最新进展；风控系统的开发。
+在搞rust！
